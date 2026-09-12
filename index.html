@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>sneakr.in — Premium Sneaker Vault</title>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Syne:wght@700;800&display=swap" rel="stylesheet">
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        brand: { bg: '#0a0a0c', card: '#121216', border: '#22222a', accent: '#ffffff', muted: '#888899' }
+                    },
+                    fontFamily: {
+                        sans: ['Plus Jakarta Sans', 'sans-serif'],
+                        display: ['Syne', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+
+    <style>
+        .glow-effect { box-shadow: 0 0 50px -10px rgba(255, 255, 255, 0.15); }
+        .glass-nav { background: rgba(10, 10, 12, 0.85); backdrop-filter: blur(12px); }
+        .logo-text { font-family: 'Plus Jakarta Sans', sans-serif; font-weight: 800; letter-spacing: -0.04em; }
+    </style>
+</head>
+<body class="bg-brand-bg text-gray-100 font-sans antialiased min-h-screen flex flex-col justify-between" x-data="storefront()">
+
+    <div class="bg-white text-black text-xs font-semibold py-2 px-4 text-center tracking-wider uppercase">
+        ⚡ Complimentary Worldwide Express Shipping & Authenticity Guarantee on All Orders
+    </div>
+
+    <header class="sticky top-0 z-40 glass-nav border-b border-brand-border/60 transition-all">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between">
+            <a href="#" class="flex items-center space-x-2 group">
+                <span class="logo-text text-2xl sm:text-3xl tracking-tighter text-white">sneakr<span class="text-gray-400">.in</span></span>
+            </a>
+
+            <nav class="hidden md:flex items-center space-x-8 text-sm font-medium tracking-wide">
+                <a href="#catalogue" class="hover:text-white transition-colors text-gray-400">Catalogue</a>
+                <a href="#features" class="hover:text-white transition-colors text-gray-400">Authenticity</a>
+                <a href="#contact" class="hover:text-white transition-colors text-gray-400">Contact Us</a>
+            </nav>
+
+            <div class="flex items-center space-x-4">
+                <button @click="openWishlist = true" class="relative p-2 text-gray-400 hover:text-white transition-colors">
+                    <i data-lucide="heart" class="w-6 h-6"></i>
+                    <span x-show="wishlist.length > 0" x-text="wishlist.length" class="absolute top-1 right-1 bg-white text-black text-[10px] font-bold rounded-full w-4 h-4 flex items-center justify-center"></span>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <section class="relative overflow-hidden py-20 lg:py-32 border-b border-brand-border">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
+                <div class="lg:col-span-7 space-y-6 text-left">
+                    <h1 class="font-display text-4xl sm:text-6xl lg:text-7xl font-extrabold tracking-tight leading-none text-white">
+                        THE ART OF THE <br/><span class="text-transparent bg-clip-text bg-gradient-to-r from-white via-gray-300 to-gray-600">PERFECT DROP.</span>
+                    </h1>
+                    <p class="text-gray-400 text-base sm:text-lg max-w-xl leading-relaxed">
+                        Discover 100% verified authentic Grail sneakers, deadstock classics, and limited edition collaborations curated for discerning collectors.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="catalogue" class="py-16 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full">
+        <div class="flex flex-col md:flex-row md:items-end justify-between mb-10 gap-4">
+            <div>
+                <h2 class="font-display text-3xl sm:text-4xl font-extrabold text-white tracking-tight">Vault Catalogue</h2>
+            </div>
+            <div class="flex flex-wrap items-center gap-3">
+                <input type="text" x-model="searchQuery" placeholder="Search models..." class="bg-brand-card border border-brand-border text-xs px-4 py-2.5 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:border-white w-full sm:w-48">
+                <select x-model="selectedCategory" class="bg-brand-card border border-brand-border text-xs px-3 py-2.5 rounded-lg text-white focus:outline-none focus:border-white">
+                    <option value="All">All Brands</option>
+                    <option value="Retro">Retro High</option>
+                    <option value="Runner">Low Runners</option>
+                    <option value="Minimal">Minimalist</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+            <template x-for="product in filteredProducts" :key="product.id">
+                <div class="bg-brand-card border border-brand-border rounded-xl p-5 flex flex-col justify-between hover:border-gray-500 transition-all group">
+                    <div>
+                        <div class="h-48 rounded-lg bg-black/40 border border-brand-border/50 flex items-center justify-center relative overflow-hidden mb-4">
+                            <span class="absolute top-3 left-3 text-[10px] font-bold uppercase bg-white/10 backdrop-blur-md px-2 py-1 rounded text-gray-300 border border-white/10" x-text="product.category"></span>
+                            <button @click="toggleWishlist(product)" class="absolute top-3 right-3 p-1.5 rounded-full bg-black/50 hover:bg-black text-gray-400 hover:text-white transition-colors">
+                                <i data-lucide="heart" class="w-4 h-4" :class="isInWishlist(product.id) ? 'fill-white text-white' : ''"></i>
+                            </button>
+                            <i data-lucide="sparkles" class="w-16 h-16 text-gray-700 group-hover:scale-110 transition-transform duration-300"></i>
+                        </div>
+                        <h3 class="font-display text-lg font-bold text-white group-hover:text-gray-200" x-text="product.name"></h3>
+                        <p class="text-xs text-gray-400 mt-1 line-clamp-2" x-text="product.description"></p>
+                    </div>
+                    <div class="mt-6 pt-4 border-t border-brand-border flex items-center justify-between">
+                        <div>
+                            <span class="text-[10px] text-gray-500 uppercase tracking-wider block">Est. Value</span>
+                            <span class="font-bold text-white text-lg" x-text="'$' + product.price"></span>
+                        </div>
+                        <button @click="quickViewProduct = product" class="px-4 py-2 bg-white/10 hover:bg-white text-white hover:text-black text-xs font-bold rounded-lg transition-all border border-white/10">Quick View</button>
+                    </div>
+                </div>
+            </template>
+        </div>
+    </section>
+
+    <div x-show="quickViewProduct" x-cloak class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm">
+        <div @click.away="quickViewProduct = null" class="bg-brand-card border border-brand-border rounded-2xl max-w-lg w-full p-6 relative">
+            <button @click="quickViewProduct = null" class="absolute top-4 right-4 text-gray-400 hover:text-white">
+                <i data-lucide="x" class="w-5 h-5"></i>
+            </button>
+            <template x-if="quickViewProduct">
+                <div>
+                    <h3 class="font-display text-2xl font-bold text-white mt-2" x-text="quickViewProduct.name"></h3>
+                    <p class="text-gray-400 text-sm mt-2" x-text="quickViewProduct.description"></p>
+                    <div class="mt-8 pt-4 border-t border-brand-border flex items-center justify-between">
+                        <span class="text-2xl font-bold text-white" x-text="'$' + quickViewProduct.price"></span>
+                        <a :href="'https://wa.me/?text=Hi%20sneakr.in,%20I%20am%20interested%20in%20' + encodeURIComponent(quickViewProduct.name)" target="_blank" class="px-6 py-3 bg-white text-black font-bold text-xs uppercase tracking-wider rounded-xl hover:bg-gray-200 transition-colors">
+                            Reserve Pair
+                        </a>
+                    </div>
+                </div>
+            </template>
+        </div>
+    </div>
+
+    <footer id="contact" class="border-t border-brand-border bg-brand-bg py-12">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col md:flex-row items-center justify-between gap-6">
+            <div>
+                <span class="logo-text text-2xl tracking-tighter text-white">sneakr<span class="text-gray-400">.in</span></span>
+                <p class="text-xs text-gray-500 mt-1">© 2026 sneakr.in — Premium Sneakers.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        document.addEventListener('alpine:init', () => {
+            Alpine.data('storefront', () => ({
+                searchQuery: '', selectedCategory: 'All', openWishlist: false, quickViewProduct: null, wishlist: [],
+                products: [
+                    { id: 1, name: 'Air Jordan 1 High 65', price: 450, category: 'Retro', description: 'Original premium tumbled leather.' },
+                    { id: 2, name: 'Yeezy Boost 350 V2', price: 320, category: 'Runner', description: 'Primeknit upper with Boost cushioning.' },
+                    { id: 3, name: 'Minimalist Studio Low', price: 280, category: 'Minimal', description: 'Handcrafted Italian leather.' }
+                ],
+                get filteredProducts() {
+                    return this.products.filter(p => p.name.toLowerCase().includes(this.searchQuery.toLowerCase()) && (this.selectedCategory === 'All' || p.category === this.selectedCategory));
+                },
+                toggleWishlist(product) {
+                    const idx = this.wishlist.findIndex(item => item.id === product.id);
+                    idx > -1 ? this.wishlist.splice(idx, 1) : this.wishlist.push(product);
+                },
+                isInWishlist(id) { return this.wishlist.some(item => item.id === id); }
+            }));
+            lucide.createIcons();
+        });
+    </script>
+</body>
+</html>
